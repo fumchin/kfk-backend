@@ -1,3 +1,6 @@
+// 此類別實作了一個 JWT 驗證的過濾器。
+// 它會攔截請求並驗證 JWT Token，以確保安全性。
+
 package com.example.order_service.config;
 
 import jakarta.servlet.FilterChain;
@@ -29,19 +32,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        // 取得 Authorization 標頭
         String header = request.getHeader("Authorization");
+
+        // 如果標頭存在且以 "Bearer " 開頭，則進行 Token 驗證
         if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
-            if (jwtUtils.validateToken(token)) {
-                String username = jwtUtils.getUsernameFromToken(token);
-                // 此處簡化：只要 token 合法，就視為一個 "User"
+            String token = header.substring(7); // 去掉 "Bearer " 前綴
+            if (jwtUtils.validateToken(token)) { // 驗證 Token 是否有效
+                String username = jwtUtils.getUsernameFromToken(token); // 從 Token 中取得使用者名稱
+
+                // 建立使用者的認證資訊
                 User principal = new User(username, "", Collections.emptyList());
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                // 將認證資訊存入 SecurityContext
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+
+        // 繼續執行過濾器鏈
         filterChain.doFilter(request, response);
     }
 }

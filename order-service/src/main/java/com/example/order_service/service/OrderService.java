@@ -1,3 +1,5 @@
+// 此服務類別包含管理訂單的商業邏輯。
+
 package com.example.order_service.service;
 
 import com.example.order_service.entity.Order;
@@ -14,22 +16,24 @@ import java.util.List;
 public class OrderService {
     private final OrderRepository orderRepository;
 
+    // 下單並儲存到資料庫
     public Order placeOrder(String username, String symbol, OrderType type, int quantity, double price) {
-        // 這裡可以額外檢查用戶餘額或庫存股票數量(若要實做真實檢查，需呼叫UserService)
-        // 目前簡化：直接儲存為一筆 "PENDING" or "COMPLETED" 訂單
+        // 這裡可以額外檢查用戶餘額或庫存股票數量
+        // 簡化：直接儲存為一筆 "PENDING" 訂單
         Order order = Order.builder()
                 .username(username)
                 .symbol(symbol)
                 .type(type)
                 .quantity(quantity)
                 .price(price)
-                .status("PENDING")
-                .timestamp(LocalDateTime.now())
+                .status("PENDING") // 設定初始狀態為 PENDING
+                .timestamp(LocalDateTime.now()) // 設定訂單建立時間
                 .build();
-        return orderRepository.save(order);
+        return orderRepository.save(order); // 儲存訂單到資料庫
     }
 
+    // 查詢使用者的歷史訂單
     public List<Order> getHistory(String username) {
-        return orderRepository.findByUsernameOrderByTimestampDesc(username);
+        return orderRepository.findByUsernameOrderByTimestampDesc(username); // 按時間倒序排列
     }
 }

@@ -1,3 +1,5 @@
+// 此類別負責配置應用程式的安全性設定，包括認證與授權。
+
 package com.example.order_service.config;
 
 import lombok.RequiredArgsConstructor;
@@ -15,15 +17,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // 不需要 /api/order/place & /api/order/history 開放 => 全部需要 JWT
+        // 關閉 CSRF 保護，並要求所有請求都需要認證
         http.csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().authenticated()
+                .anyRequest().authenticated() // 所有請求都需要 JWT 驗證
             );
 
-        // 將我們的 jwtFilter 加入 filter chain
+        // 將自訂的 JWT 過濾器加入過濾器鏈
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
+        return http.build(); // 建立並回傳 SecurityFilterChain
     }
 }
