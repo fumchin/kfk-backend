@@ -1,3 +1,4 @@
+# 此檔案為 Maven Wrapper 腳本，用於執行 Maven 命令，確保使用正確版本的 Maven。
 #!/bin/sh
 # ----------------------------------------------------------------------------
 # Licensed to the Apache Software Foundation (ASF) under one

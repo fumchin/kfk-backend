@@ -1,17 +1,19 @@
+# 此檔案為 Spring Boot 應用程式的主要設定檔，包含伺服器、資料庫及 JWT 的相關設定。
+
 server:
-  port: 8081
+  port: 8081 # 伺服器埠號
 
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/userdb
-    username: user
-    password: password
+    url: jdbc:postgresql://db:5432/userdb # 資料庫連線 URL
+    username: user # 資料庫用戶名
+    password: password # 資料庫密碼
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: update # 自動更新資料庫結構
+    show-sql: true # 顯示 SQL 查詢
+    database-platform: org.hibernate.dialect.PostgreSQLDialect # 使用 PostgreSQL 方言
 
 jwt:
-  secret: "abcdefghijklmnopqrstuvwxyz123456abcdefghijklmnopqrstuvwxyz123456"
-  expiration: 3600000
+  secret: "abcdefghijklmnopqrstuvwxyz123456abcdefghijklmnopqrstuvwxyz123456" # JWT 密鑰
+  expiration: 3600000 # JWT 過期時間（毫秒）

@@ -1,3 +1,4 @@
+// 此控制器負責處理與用戶相關的 HTTP 請求，例如註冊、登入、查詢餘額及更新餘額。
 package com.example.user_service.controller;
 
 import com.example.user_service.config.JwtUtils;
@@ -55,16 +56,6 @@ public class UserController {
         return res; // 回傳結果
     }
 
-    // @GetMapping("/balance") // 查詢用戶餘額的 API
-    // public Map<String, Object> balance(@RequestParam String username) {
-    //     // 根據用戶名查詢用戶資料
-    //     User user = userService.findByUsername(username).orElseThrow();
-    //     // 建立回應 Map，包含用戶名和餘額
-    //     Map<String, Object> res = new HashMap<>();
-    //     res.put("username", user.getUsername()); // 用戶名
-    //     res.put("balance", user.getBalance()); // 用戶餘額
-    //     return res; // 回傳結果
-    // }
     @GetMapping("/balance") // 查詢用戶餘額的 API
     public Map<String, Object> balance(@RequestParam long userId) {
         // 根據用戶 ID 查詢用戶資料
@@ -77,22 +68,6 @@ public class UserController {
         return res; // 回傳結果
     }
 
-    // @PostMapping("/update-balance") // 更新用戶餘額的 API
-    // public ResponseEntity<?> updateBalance(@RequestBody Map<String, Object> req) {
-    //     // 從請求中取得用戶名和金額
-    //     String username = (String) req.get("username");
-    //     Double amount = ((Number) req.get("amount")).doubleValue();
-
-    //     // 呼叫 UserService 更新餘額
-    //     boolean updated = userService.updateBalance(username, amount);
-    //     if (updated) {
-    //         // 更新成功，回傳成功訊息
-    //         return ResponseEntity.ok().body(Map.of("message", "Balance updated"));
-    //     } else {
-    //         // 用戶不存在，回傳錯誤訊息
-    //         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
-    //     }
-    // }
     @PostMapping("/update-balance") // 更新用戶餘額的 API
     public ResponseEntity<?> updateBalance(@RequestBody Map<String, Object> req) {
         // 從請求中取得用戶名和金額

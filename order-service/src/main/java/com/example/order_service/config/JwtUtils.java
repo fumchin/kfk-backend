@@ -1,3 +1,4 @@
+// 這個檔案是用來處理 JWT Token 的工具類別，包含生成、解析和驗證 Token 的功能。
 // 此工具類別提供生成、驗證和解析 JWT Token 的方法。
 
 package com.example.order_service.config;

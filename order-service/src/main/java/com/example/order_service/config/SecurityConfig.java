@@ -1,3 +1,4 @@
+// 這個檔案是用來設定應用程式的安全性，包括 JWT 驗證和請求授權。
 // 此類別負責配置應用程式的安全性設定，包括認證與授權。
 
 package com.example.order_service.config;
