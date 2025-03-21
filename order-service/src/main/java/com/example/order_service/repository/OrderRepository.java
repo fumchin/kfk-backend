@@ -10,4 +10,5 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     // 根據使用者名稱查詢訂單，並按時間倒序排列
     List<Order> findByUsernameOrderByTimestampDesc(String username);
+    List<Order> findByUserIdOrderByTimestampDesc(Long userId);
 }

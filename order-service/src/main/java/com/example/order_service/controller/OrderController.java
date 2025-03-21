@@ -32,45 +32,40 @@ public class OrderController {
     public Map<String, Object> placeOrder(@RequestBody Map<String, Object> req) {
         // 解析請求參數
         String username = (String) req.get("username");
+        Long userId = ((Number) req.get("userId")).longValue();
         String symbol = (String) req.get("symbol");
-        String typeStr = (String) req.get("type");
+        Integer type = ((Number) req.get("type")).intValue();
         Integer quantity = ((Number) req.get("quantity")).intValue();
         Double price = ((Number) req.get("price")).doubleValue();
 
-        // 將訂單類型轉換為枚舉
-        OrderType orderType = OrderType.valueOf(typeStr.toUpperCase());
 
         // 1️⃣ 儲存訂單到資料庫
-        Order order = orderService.placeOrder(username, symbol, orderType, quantity, price);
+        // Order order = orderService.createOrder(username, userId,  symbol, orderType, quantity, price);
 
         // 2️⃣ 發送 Kafka 訊息
         Map<String, Object> kafkaMessage = new HashMap<>();
-        kafkaMessage.put("orderId", order.getOrderId());
         kafkaMessage.put("username", username);
+        kafkaMessage.put("userId", userId);
         kafkaMessage.put("symbol", symbol);
-        kafkaMessage.put("type", orderType.toString());
+        kafkaMessage.put("type", type);
         kafkaMessage.put("quantity", quantity);
         kafkaMessage.put("price", price);
-        kafkaMessage.put("status", order.getStatus());
-        kafkaMessage.put("timestamp", order.getTimestamp());
         kafkaTemplate.send("order-topic", kafkaMessage);
 
         // 3️⃣ 回傳 API 給前端
         Map<String, Object> response = new HashMap<>();
-        response.put("orderId", order.getOrderId());
-        response.put("status", order.getStatus());
         response.put("message", "訂單已成功下單並發送至 Kafka");
         return response;
     }
 
     @GetMapping("/history")
-    public Map<String, Object> getHistory(@RequestParam String username) {
-        // 查詢使用者的歷史訂單
-        List<Order> orders = orderService.getHistory(username);
+    public Map<String, Object> getHistory(@RequestParam Long userId) {
+        // 查詢使用者的歷史訂單c
+        List<Order> orders = orderService.getOrdres(userId);
 
         // 將結果封裝為回應
         Map<String, Object> response = new HashMap<>();
-        response.put("username", username);
+        response.put("userId", userId);
         response.put("orders", orders);
         return response;
     }

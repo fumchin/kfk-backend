@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -28,11 +28,11 @@ public class UserController {
     @PostMapping("/register") // 處理用戶註冊的 API
     public Map<String, Object> register(@RequestBody Map<String, String> req) {
         // 呼叫 UserService 的 register 方法，新增用戶
-        User user = userService.register(req.get("username"), req.get("password"));
+        User user = userService.createUser(req.get("username"), req.get("password"));
         // 建立回應 Map，包含註冊成功訊息和用戶 ID
         Map<String, Object> res = new HashMap<>();
         res.put("message", "User registered successfully"); // 註冊成功訊息
-        res.put("userId", user.getId()); // 用戶 ID
+        res.put("userId", user.getUserId()); // 用戶 ID
         return res; // 回傳結果
     }
 
@@ -55,25 +55,52 @@ public class UserController {
         return res; // 回傳結果
     }
 
+    // @GetMapping("/balance") // 查詢用戶餘額的 API
+    // public Map<String, Object> balance(@RequestParam String username) {
+    //     // 根據用戶名查詢用戶資料
+    //     User user = userService.findByUsername(username).orElseThrow();
+    //     // 建立回應 Map，包含用戶名和餘額
+    //     Map<String, Object> res = new HashMap<>();
+    //     res.put("username", user.getUsername()); // 用戶名
+    //     res.put("balance", user.getBalance()); // 用戶餘額
+    //     return res; // 回傳結果
+    // }
     @GetMapping("/balance") // 查詢用戶餘額的 API
-    public Map<String, Object> balance(@RequestParam String username) {
-        // 根據用戶名查詢用戶資料
-        User user = userService.findByUsername(username).orElseThrow();
+    public Map<String, Object> balance(@RequestParam long userId) {
+        // 根據用戶 ID 查詢用戶資料
+        User user = userService.findByUserId(userId).orElseThrow();
         // 建立回應 Map，包含用戶名和餘額
         Map<String, Object> res = new HashMap<>();
+        res.put("userId", user.getUserId()); // 用戶 ID
         res.put("username", user.getUsername()); // 用戶名
         res.put("balance", user.getBalance()); // 用戶餘額
         return res; // 回傳結果
     }
 
+    // @PostMapping("/update-balance") // 更新用戶餘額的 API
+    // public ResponseEntity<?> updateBalance(@RequestBody Map<String, Object> req) {
+    //     // 從請求中取得用戶名和金額
+    //     String username = (String) req.get("username");
+    //     Double amount = ((Number) req.get("amount")).doubleValue();
+
+    //     // 呼叫 UserService 更新餘額
+    //     boolean updated = userService.updateBalance(username, amount);
+    //     if (updated) {
+    //         // 更新成功，回傳成功訊息
+    //         return ResponseEntity.ok().body(Map.of("message", "Balance updated"));
+    //     } else {
+    //         // 用戶不存在，回傳錯誤訊息
+    //         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+    //     }
+    // }
     @PostMapping("/update-balance") // 更新用戶餘額的 API
     public ResponseEntity<?> updateBalance(@RequestBody Map<String, Object> req) {
         // 從請求中取得用戶名和金額
-        String username = (String) req.get("username");
+        Long userId = ((Number) req.get("userId")).longValue();
         Double amount = ((Number) req.get("amount")).doubleValue();
 
         // 呼叫 UserService 更新餘額
-        boolean updated = userService.updateBalance(username, amount);
+        boolean updated = userService.updateBalance(userId, amount);
         if (updated) {
             // 更新成功，回傳成功訊息
             return ResponseEntity.ok().body(Map.of("message", "Balance updated"));

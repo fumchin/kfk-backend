@@ -24,26 +24,31 @@ public class OrderConsumer {
         log.info("Received from Kafka: {}", orderRequest);
 
         try {
-            Long orderId = ((Number) orderRequest.get("orderId")).longValue();
+            // Long orderId = ((Number) orderRequest.get("orderId")).longValue();
             String username = (String) orderRequest.get("username");
+            Long userId = ((Number) orderRequest.get("userId")).longValue();
             Double price = ((Number) orderRequest.get("price")).doubleValue();
             Integer quantity = ((Number) orderRequest.get("quantity")).intValue();
+            Integer type = ((Number) orderRequest.get("type")).intValue();
+        
 
-            // 1️⃣ 更新訂單狀態
-            Optional<Order> optionalOrder = orderRepository.findById(orderId);
-            if (optionalOrder.isPresent()) {
-                Order order = optionalOrder.get();
-                order.setStatus("APPROVED"); // 改為 APPROVED
-                orderRepository.save(order);
-                log.info("Order {} updated to APPROVED", orderId);
-            }
-
+            // 1️⃣ create order
+            Order order = Order.builder()
+                    .username(username)
+                    .userId(userId)
+                    .price(price)
+                    .quantity(quantity)
+                    .type(type)
+                    .build();
+            orderRepository.save(order);
+            log.info("Order saved: {}", order);
+            log.info("Order ID: {}", order.getOrderId());
             // 2️⃣ 呼叫 User Service 扣餘額
             double totalAmount = price * quantity;
             String userServiceUrl = "http://user-service:8081/api/user/update-balance";
 
             Map<String, Object> request = Map.of(
-                    "username", username,
+                    "userId", userId,
                     "amount", -totalAmount // 扣除金額
             );
 

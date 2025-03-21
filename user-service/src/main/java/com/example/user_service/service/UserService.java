@@ -14,7 +14,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public User register(String username, String password) {
+    public User createUser(String username, String password) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("Username already exists");
         }
@@ -30,8 +30,24 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    public boolean updateBalance(String username, Double amount) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
+    public Optional<User> findByUserId(Long userId) {
+        return userRepository.findById(userId);
+    }
+
+    // public boolean updateBalance(String username, Double amount) {
+    //     Optional<User> userOpt = userRepository.findByUsername(username);
+    //     if (userOpt.isPresent()) {
+    //         User user = userOpt.get();
+    //         user.setBalance(user.getBalance() + amount);
+    //         userRepository.save(user);
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
+
+    public boolean updateBalance(Long userId, Double amount) {
+        Optional<User> userOpt = userRepository.findByUserId(userId);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             user.setBalance(user.getBalance() + amount);
